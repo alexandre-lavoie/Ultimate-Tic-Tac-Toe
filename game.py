@@ -61,6 +61,17 @@ class Game:
             tick == x for x in tile[[2, 4, 6]]
         )
 
+    def check_draw(self):
+        if all(self.win_status != None):
+            return True
+
+        for i, x in enumerate(self.win_status):
+            if x == None:
+                if any(self.board[i] == "."):
+                    return False
+
+        return True
+
     def make_move(self, outer_tile, inner_tile):
 
         if (
