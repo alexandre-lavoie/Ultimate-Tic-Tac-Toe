@@ -32,9 +32,22 @@ You are allowed to add function as needed.
 The `move` method will have to return a move `X/Y` were `X` and `Y` are geographic coordiantes among the followings: NW, N, NE, W, C, E, SW, S, SE.
 e.g. "NW/C" would place a move in the center (small) of the top-right (big).
 
+# Board Visualization
+```
+         NW   N  NE   W   C   E  SW   S  SE 
+    NW  ['.' '.' '.' '.' '.' '.' '.' '.' '.']
+    N   ['.' '.' '.' '.' '.' '.' '.' '.' '.']
+    NE  ['.' '.' '.' '.' '.' '.' '.' '.' '.']
+    W   ['.' '.' '.' '.' '.' '.' '.' '.' '.']
+    C   ['.' '.' '.' '.' '.' '.' '.' '.' '.']
+    E   ['.' '.' '.' '.' '.' '.' '.' '.' '.']
+    SW  ['.' '.' '.' '.' '.' '.' '.' '.' '.']
+    S   ['.' '.' '.' '.' '.' '.' '.' '.' '.']
+    SE  ['.' '.' '.' '.' '.' '.' '.' '.' '.']
+```
+
+Where rows represent coordinates in the big board while columns represent coordinates in the small board.
+
 ## Constraint
 * The first valid move your bot do will be registered
-* Your bot can attempt as many move as I want
-* You will have a 1 second timeout
-* If no move is registered after the timeout your bot lose the game
-
+* Your bot can attempt as many move as it wants

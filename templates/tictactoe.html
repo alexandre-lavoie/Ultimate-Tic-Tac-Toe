@@ -1,0 +1,108 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"
+        integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+
+    <style>
+        table.outer {
+            justify-self: center;
+        }
+
+        table button {
+            width: 3em;
+            height: 3em;
+            margin: 0.05em;
+        }
+
+        .full {
+            width: 152px;
+            height: 152px;
+            margin: 0.05em;
+            font-size: 36px;
+        }
+    </style>
+
+    <script>
+        let socket = io();
+
+        function setTile(i, j, disabled=false) {
+            [...document.getElementById(`table-${i}${j}`).getElementsByTagName('button')].forEach(button => button.disabled = disabled)
+        }
+
+        function fillTile(i, j) {
+            document.getElementById(`table-${i}${j}`).remove();
+            document.getElementById(`td-${i}${j}`).innerHTML = `<button class="btn btn-light full" disabled="true"><b>${player}</b></button>`;
+        }
+
+        function buttonClick(event) {
+            let button = event.target;
+
+            if(button.innerHTML == '') {
+                socket.emit('play', {i: button.getAttribute('i'), j: button.getAttribute('j')});
+            }
+        }
+
+        function playAI() {
+            socket.emit('ai');
+        }
+
+        socket.emit('getBoard')
+
+        socket.on('getBoard', board => {
+            for(let i = 0; i < 9; i++) {
+                for(let j = 0; j < 9; j++) {
+                    document.getElementById(`button-${i}-${j}`).innerHTML = (board[i][j] == '.') ? '' : `<b>${board[i][j]}</b>`;
+                }
+            }
+        });
+
+        socket.on('play', position => {
+            document.getElementById(`button-${position.i}-${position.j}`).innerHTML = `<b>${position.player}</b>`;
+
+            for(let i = 0; i < 9; i++) {
+                setTile(Math.floor(i / 3), i % 3, !position.nextMoves.includes(i))
+            }
+        });
+    </script>
+</head>
+
+<body class="bg-dark">
+    <div class="d-flex justify-content-center align-items-center" style="height: 100vh">
+        <table>
+            {% for i in range(3) %}
+            <tr>
+                {% for j in range(3) %}
+                <td id="td-{{i}}{{j}}">
+                    <table id="table-{{i}}{{j}}">
+                        {% for di in range(3) %}
+                        <tr>
+                            {% for dj in range(3) %}
+                            <td>
+                                <button id="button-{{i*3+di}}-{{j*3+dj}}" class="btn btn-light" i={{i*3+di}} j={{j*3+dj}} onclick="buttonClick(event)"></button>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+        <button class="btn btn-danger" onclick="playAI()">AI</button>
+    </div>
+</body>
+
+</html>
