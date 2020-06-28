@@ -74,4 +74,4 @@ class Server:
 
 if __name__ == '__main__':
     server = Server()
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=True, port=80, host="0.0.0.0")
